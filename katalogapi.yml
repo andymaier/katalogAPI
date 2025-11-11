@@ -4,9 +4,86 @@ info:
   version: '1.0'
 servers:
   - url: http://localhost:50000/
+  - url: http://ocp4.de:50000/
 paths:
-  /test:
+  /article:
     get:
+      summary: Gebe alle Artikel zurück
+      description: Liefert alle Artikel zurück
+      tags:
+        - Shop
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Artikel'
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Artikel'
+      summary: Erstelle einen Artikel
+      description: | 
+        # Artikel
+        
+        Ein Artikel besteht aus den folgenden Feldern:
+          - id
+          - name
+          - preis
+          
+        Wobei nur Name und Preis verpflichtend sind.
+
+        Inline-style: 
+        ![alt text](https://i.pinimg.com/originals/d2/06/92/d20692869beb9b6e003beb2e1fb9666f.jpg "Logo Title Text 1")
+
+        | Tables        | Are           | Cool  |
+        | ------------- |:-------------:| -----:|
+        | col 3 is      | right-aligned | $1600 |
+        | col 2 is      | centered      |   $12 |
+        | zebra stripes | are neat      |    $1 |
+      tags:
+        - Shop
+      responses:
+        '201':
+          description: Created
+          headers:
+            Location:
+              description: URI des neuen Artikels
+              example: <Hostname>/artikels/d3836ccf-c76d-4029-8600-e8b48cd215be
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:                                
+                $ref: '#/components/schemas/Artikel' 
+        
+
+components:
+  schemas:
+    Artikel:
+      properties:
+        id:
+          type: string
+          maxLength: 30
+          format: uuid
+          example: d3836ccf-c76d-4029-8600-e8b48cd215be
+          description: Eine UUID für die Identifikation
+        name:
+          type: string
+          maxLength: 100
+          example: Grapefruit
+          description: Das ist der Name des Artikels dessen Länger limitiert ist.
+        preis:
+          type: number
+          minimum: 0
+          example: 3.99
+          description: Der Preis, nicht negativ.
+      required:
+        - "name"
+        - "preis"
