@@ -1,0 +1,63 @@
+extends: [https://raw.githubusercontent.com/baloise-incubator/spectral-ruleset/main/zalando.yml, spectral:oas]
+
+rules:
+  # Zalando Guidelines
+  
+  # 1. Kebab-case für Pfade
+  path-kebab-case:
+    description: "Pfade müssen kebab-case verwenden"
+    message: "Pfad '{{property}}' muss kebab-case sein (z.B. /user-profile statt /userProfile)"
+    severity: error
+    given: "$.paths[*]~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^(\\/|[a-z0-9-.]+|\\{[a-z0-9-]+\\})+$"
+
+  # 2. Plural für Ressourcen
+  path-plural-resources:
+    description: "Ressourcen-Pfade sollten Plural sein"
+    message: "Ressource '{{value}}' sollte im Plural sein"
+    severity: warn
+    given: "$.paths.*~"
+    then:
+      function: pattern
+      functionOptions:
+        match: "^\\/([a-z0-9-]+s|\\{[a-z0-9-]+\\})"
+
+  # 3. HTTP-Methoden müssen korrekt sein
+  operation-success-response:
+    description: "Jede Operation braucht einen 2xx Response"
+    message: "Operation muss mindestens einen 2xx Response haben"
+    severity: error
+    given: "$.paths[*][*].responses"
+    then:
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          anyOf:
+            - required: ["200"]
+            - required: ["201"]
+            - required: ["202"]
+            - required: ["204"]
+
+  # 4. API muss Version haben
+  info-version:
+    description: "API muss eine Version haben"
+    message: "Version fehlt in info.version"
+    severity: error
+    given: "$.info"
+    then:
+      field: version
+      function: truthy
+
+  # 5. Alle Operationen brauchen operationId
+  operation-operationId:
+    description: "Alle Operationen brauchen eine operationId"
+    message: "operationId fehlt"
+    severity: error
+    given: "$.paths[*][*]"
+    then:
+      field: operationId
+      function: truthy
