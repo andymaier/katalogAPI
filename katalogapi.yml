@@ -6,7 +6,75 @@ servers:
   - url: http://localhost:50000/
   - url: http://ocp4.de:50000/
 paths:
-  /article:
+  /articles/{aid}:
+    parameters:
+      - in: path
+        name: aid
+        schema:
+          type: string
+          maxLength: 100
+          format: uuid
+        required: true
+    get:
+      summary: Gebe einen Artikel zurück
+      description: Ein Artikel wird zurückgegeben
+      tags:
+        - Shop
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:                                
+                $ref: '#/components/schemas/Artikel'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Artikel'
+      summary: Ändere einen Artikel
+      description: Ein Artikel wird geändert
+      tags:
+        - Shop
+      responses:
+        '200':
+          description: changed
+          content:
+            application/json:
+              schema:                                
+                $ref: '#/components/schemas/Artikel'
+    patch:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArtikelPatch'
+      summary: Ändere einen beliebigen Wert eines Felds
+      description: Ein Wert eines Feldes im Artikel wird geändert
+      tags:
+        - Shop
+      responses:
+        '200':
+          description: changed
+          content:
+            application/json:
+              schema:                                
+                $ref: '#/components/schemas/Artikel'
+    delete:
+      summary: Lösche einen Artikel
+      description: Ein Artikel wird gelöscht
+      tags:
+        - Shop
+      responses:
+        '200':
+          description: deleted
+          content:
+            application/json:
+              schema:              
+                $ref: '#/components/schemas/ResponseDeleted'
+
+  /articles:
     get:
       summary: Gebe alle Artikel zurück
       description: Liefert alle Artikel zurück
@@ -31,7 +99,7 @@ paths:
       description: | 
         # Artikel
         
-        Ein Artikel besteht aus den folgenden Feldern:
+        Ein **Artikel** besteht aus den folgenden Feldern:
           - id
           - name
           - preis
@@ -70,7 +138,7 @@ components:
       properties:
         id:
           type: string
-          maxLength: 30
+          maxLength: 100
           format: uuid
           example: d3836ccf-c76d-4029-8600-e8b48cd215be
           description: Eine UUID für die Identifikation
@@ -87,3 +155,37 @@ components:
       required:
         - "name"
         - "preis"
+    ArtikelPatch:
+      properties:
+        id:
+          type: string
+          maxLength: 100
+          format: uuid
+          example: d3836ccf-c76d-4029-8600-e8b48cd215be
+          description: Eine UUID für die Identifikation
+        name:
+          type: string
+          maxLength: 100
+          example: Grapefruit
+          description: Das ist der Name des Artikels dessen Länger limitiert ist.
+        preis:
+          type: number
+          minimum: 0
+          example: 3.99
+          description: Der Preis, nicht negativ.
+    ResponseDeleted:
+      properties:
+        id:
+          type: string
+          maxLength: 100
+          format: uuid
+          example: d3836ccf-c76d-4029-8600-e8b48cd215be
+          description: Eine UUID für die Identifikation
+        message:
+          type: string
+          maxLength: 100
+          example: Successfully deleted
+          description: Bei Erfolg/Misserfolg wird eine Meldung zurückgegeben.        
+      required:
+        - "id"
+        - "message"
