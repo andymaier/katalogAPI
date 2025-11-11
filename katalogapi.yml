@@ -8,8 +8,8 @@ info:
     url: "https://www.predic8.de"
     email: "info@predic8.de"
 servers:
-  - url: http://localhost:50000
-  - url: http://ocp4.de:50000
+  - url: http://localhost:50001
+  - url: http://ocp4.de:50001
 tags:
 - name: "Shop"
 paths:
