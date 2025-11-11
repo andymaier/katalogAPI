@@ -1,15 +1,23 @@
 openapi: '3.0.3'
 info:
   title: Katalog API
-  version: '1.0'
+  description: Diese API ist im Trainng REST APIs erstellt worden
+  version: '1.0.0'
+  contact:
+    name: "Predic8"
+    url: "https://www.predic8.de"
+    email: "info@predic8.de"
 servers:
-  - url: http://localhost:50000/
-  - url: http://ocp4.de:50000/
+  - url: http://localhost:50000
+  - url: http://ocp4.de:50000
+tags:
+- name: "Shop"
 paths:
   /articles/{aid}:
     parameters:
       - in: path
         name: aid
+        description: aid is the identifier of articles
         schema:
           type: string
           maxLength: 100
@@ -18,6 +26,7 @@ paths:
     get:
       summary: Gebe einen Artikel zurück
       description: Ein Artikel wird zurückgegeben
+      operationId: "getArticle"
       tags:
         - Shop
       responses:
@@ -27,6 +36,8 @@ paths:
             application/json:
               schema:                                
                 $ref: '#/components/schemas/Artikel'
+        default:
+          description: nothing
     put:
       requestBody:
         content:
@@ -35,6 +46,7 @@ paths:
               $ref: '#/components/schemas/Artikel'
       summary: Ändere einen Artikel
       description: Ein Artikel wird geändert
+      operationId: "putArticle"
       tags:
         - Shop
       responses:
@@ -44,6 +56,8 @@ paths:
             application/json:
               schema:                                
                 $ref: '#/components/schemas/Artikel'
+        default:
+          description: nothing
     patch:
       requestBody:
         content:
@@ -52,6 +66,7 @@ paths:
               $ref: '#/components/schemas/ArtikelPatch'
       summary: Ändere einen beliebigen Wert eines Felds
       description: Ein Wert eines Feldes im Artikel wird geändert
+      operationId: "patchArticle"
       tags:
         - Shop
       responses:
@@ -61,9 +76,12 @@ paths:
             application/json:
               schema:                                
                 $ref: '#/components/schemas/Artikel'
+        default:
+          description: nothing
     delete:
       summary: Lösche einen Artikel
       description: Ein Artikel wird gelöscht
+      operationId: "deleteArticle"
       tags:
         - Shop
       responses:
@@ -73,11 +91,14 @@ paths:
             application/json:
               schema:              
                 $ref: '#/components/schemas/ResponseDeleted'
+        default:
+          description: nothing
 
   /articles:
     get:
       summary: Gebe alle Artikel zurück
       description: Liefert alle Artikel zurück
+      operationId: "getArticles"
       tags:
         - Shop
       responses:
@@ -89,12 +110,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Artikel'
+        default:
+          description: nothing
     post:
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Artikel'
+      operationId: "createArticle"
       summary: Erstelle einen Artikel
       description: | 
         # Artikel
@@ -122,7 +146,7 @@ paths:
           headers:
             Location:
               description: URI des neuen Artikels
-              example: <Hostname>/artikels/d3836ccf-c76d-4029-8600-e8b48cd215be
+              example: http://localhost:8080/artikels/d3836ccf-c76d-4029-8600-e8b48cd215be
               schema:
                 type: string
                 format: uri
@@ -130,11 +154,14 @@ paths:
             application/json:
               schema:                                
                 $ref: '#/components/schemas/Artikel' 
+        default:
+          description: nothing
         
 
 components:
   schemas:
     Artikel:
+      type: object
       properties:
         id:
           type: string
@@ -149,13 +176,15 @@ components:
           description: Das ist der Name des Artikels dessen Länger limitiert ist.
         preis:
           type: number
-          minimum: 0
+          format: double
+          minimum: 0.0
           example: 3.99
           description: Der Preis, nicht negativ.
       required:
         - "name"
         - "preis"
     ArtikelPatch:
+      type: object
       properties:
         id:
           type: string
@@ -170,10 +199,12 @@ components:
           description: Das ist der Name des Artikels dessen Länger limitiert ist.
         preis:
           type: number
-          minimum: 0
+          format: double
+          minimum: 0.0
           example: 3.99
           description: Der Preis, nicht negativ.
     ResponseDeleted:
+      type: object
       properties:
         id:
           type: string
